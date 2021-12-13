@@ -13,8 +13,17 @@ Duration for SET 100,000, 4 threads: 8.645858464s
 Duration for GET 100,000, 4 threads: 9.028478889s
 Duration for GET 100,000, 4 threads: 9.131875953s
 
+Duration for Memcached GET 100,000, 4 threads, batch 10: 3.029577444s
 
+Duration for Memcached GET 100,000, 4 threads, batch 20: 1.001978932s
+Duration for Memcached GET 100,000, 4 threads, batch 20: 1.003904164s
+
+Duration for Memcached GET 100,000, 4 threads, batch 40: 746.564722ms
+Duration for Memcached GET 100,000, 4 threads, batch 40: 751.55627ms
+
+//============================
 // REDIS RESULT
+//============================
 Duration for SET 100,000, 4 threads: 7.250889853s
 Duration for SET 100,000, 4 threads: 6.995095618s
 Duration for SET 100,000, 4 threads: 7.496678876s
@@ -23,3 +32,11 @@ Duration for SET 100,000, 4 threads: 7.348708816s
 
 Duration for Redis GET 100,000, 4 threads: 7.640487472s
 Duration for Redis GET 100,000, 4 threads: 7.227585047s
+
+Duration for Redis GET 100,000, 4 threads, batch 20: 501.222569ms
+Duration for Redis GET 100,000, 4 threads, batch 20: 486.353643ms
+Duration for Redis GET 100,000, 4 threads, batch 20: 524.053566ms
+
+Duration for Redis GET 100,000, 4 threads, batch 40: 335.921752ms
+Duration for Redis GET 100,000, 4 threads, batch 40: 313.514141ms
+Duration for Redis GET 100,000, 4 threads, batch 40: 310.676707ms

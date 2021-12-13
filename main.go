@@ -39,7 +39,7 @@ func benchMemcachedSet() {
 	fmt.Println("Duration for Memcached SET 100,000, 4 threads:", time.Since(start))
 }
 
-func benchMemcachedGet() {
+func benchMemcachedGetBatch() {
 	mc := memcache.New("localhost:11211")
 
 	var wg sync.WaitGroup
@@ -53,17 +53,23 @@ func benchMemcachedGet() {
 		endIndex := (thread + 1) * perThread
 		go func() {
 			defer wg.Done()
-			for i := startIndex; i < endIndex; i++ {
-				key := fmt.Sprintf("KEY%07d", i+1)
+			total := 0
+			for i := startIndex; i < endIndex; {
+				const batchKeys = 40
+				keys := make([]string, 0, batchKeys)
+				for k := 0; k < batchKeys; k++ {
+					key := fmt.Sprintf("KEY%07d", i+1)
+					keys = append(keys, key)
+					i++
+				}
+				total += len(keys)
 				// values := fmt.Sprintf("VALUE:%07d", i+1)
-				item, err := mc.Get(key)
+				_, err := mc.GetMulti(keys)
 				if err != nil {
 					panic(err)
 				}
-				if len(item.Value) != 13 {
-					panic("Invalid length")
-				}
 			}
+			fmt.Println("TOTAL:", total)
 		}()
 	}
 	wg.Wait()
@@ -134,10 +140,48 @@ func benchRedisGet() {
 	fmt.Println("Duration for Redis GET 100,000, 4 threads:", time.Since(start))
 }
 
-func main() {
-	benchMemcachedSet()
-	benchMemcachedGet()
+func benchRedisGetBatch() {
+	client := redis.NewClient(&redis.Options{})
 
-	//benchRedisSet()
-	//benchRedisGet()
+	var wg sync.WaitGroup
+	const numThreads = 4
+	wg.Add(numThreads)
+
+	start := time.Now()
+	for thread := 0; thread < numThreads; thread++ {
+		const perThread = 100000
+		startIndex := thread * perThread
+		endIndex := (thread + 1) * perThread
+		go func() {
+			defer wg.Done()
+			total := 0
+			for i := startIndex; i < endIndex; {
+				const batchKeys = 20
+				keys := make([]string, 0, batchKeys)
+				for k := 0; k < batchKeys; k++ {
+					key := fmt.Sprintf("KEY%07d", i+1)
+					keys = append(keys, key)
+					i++
+				}
+				total += len(keys)
+				// values := fmt.Sprintf("VALUE:%07d", i+1)
+				_, err := client.MGet(context.Background(), keys...).Result()
+				if err != nil {
+					panic(err)
+				}
+			}
+			fmt.Println("TOTAL:", total)
+		}()
+	}
+	wg.Wait()
+
+	fmt.Println("Duration for Redis GET 100,000, 4 threads:", time.Since(start))
+}
+
+func main() {
+	//benchMemcachedSet()
+	//benchMemcachedGetBatch()
+
+	benchRedisSet()
+	benchRedisGetBatch()
 }
