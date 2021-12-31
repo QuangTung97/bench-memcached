@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	gocache "github.com/QuangTung97/go-memcache/memcache"
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/go-redis/redis/v8"
 	"sync"
@@ -156,7 +157,7 @@ func benchRedisGetBatch() {
 			defer wg.Done()
 			total := 0
 			for i := startIndex; i < endIndex; {
-				const batchKeys = 20
+				const batchKeys = 100
 				keys := make([]string, 0, batchKeys)
 				for k := 0; k < batchKeys; k++ {
 					key := fmt.Sprintf("KEY%07d", i+1)
@@ -178,10 +179,88 @@ func benchRedisGetBatch() {
 	fmt.Println("Duration for Redis GET 100,000, 4 threads:", time.Since(start))
 }
 
+func benchMCSet() {
+	mc, err := gocache.New("localhost:11211", 1)
+	if err != nil {
+		panic(err)
+	}
+
+	var wg sync.WaitGroup
+	const numThreads = 4
+	wg.Add(numThreads)
+
+	start := time.Now()
+	for thread := 0; thread < numThreads; thread++ {
+		const perThread = 100000
+		startIndex := thread * perThread
+		endIndex := (thread + 1) * perThread
+		go func() {
+			defer wg.Done()
+			for i := startIndex; i < endIndex; i++ {
+				p := mc.Pipeline()
+
+				key := fmt.Sprintf("KEY%07d", i+1)
+				value := []byte(fmt.Sprintf("VALUE:%07d", i+1))
+				p.MSet(key, value, gocache.MSetOptions{})
+
+				p.Finish()
+			}
+		}()
+	}
+	wg.Wait()
+
+	fmt.Println("Duration for Memcached SET 100,000, 4 threads:", time.Since(start))
+}
+
+func benchMCGetBatch() {
+	mc, err := gocache.New("localhost:11211", 1)
+	if err != nil {
+		panic(err)
+	}
+
+	var wg sync.WaitGroup
+	const numThreads = 4
+	wg.Add(numThreads)
+
+	start := time.Now()
+	for thread := 0; thread < numThreads; thread++ {
+		const perThread = 100000
+		startIndex := thread * perThread
+		endIndex := (thread + 1) * perThread
+		go func() {
+			defer wg.Done()
+			total := 0
+			for i := startIndex; i < endIndex; {
+				const batchKeys = 100
+				keys := make([]string, 0, batchKeys)
+				for k := 0; k < batchKeys; k++ {
+					key := fmt.Sprintf("KEY%07d", i+1)
+					keys = append(keys, key)
+					i++
+				}
+				total += len(keys)
+
+				p := mc.Pipeline()
+				for _, k := range keys {
+					p.MGet(k, gocache.MGetOptions{})
+				}
+				p.Finish()
+			}
+			fmt.Println("TOTAL:", total)
+		}()
+	}
+	wg.Wait()
+
+	fmt.Println("Duration for Memcached GET 100,000, 4 threads:", time.Since(start))
+}
+
 func main() {
 	//benchMemcachedSet()
 	//benchMemcachedGetBatch()
 
 	benchRedisSet()
 	benchRedisGetBatch()
+
+	//benchMCSet()
+	//benchMCGetBatch()
 }

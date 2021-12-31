@@ -40,3 +40,20 @@ Duration for Redis GET 100,000, 4 threads, batch 20: 524.053566ms
 Duration for Redis GET 100,000, 4 threads, batch 40: 335.921752ms
 Duration for Redis GET 100,000, 4 threads, batch 40: 313.514141ms
 Duration for Redis GET 100,000, 4 threads, batch 40: 310.676707ms
+
+//============================
+// My Memcache Client Result
+//============================
+Duration for SET 100,000, 4 threads: 6.906217738s
+Duration for SET 100,000, 4 threads: 7.442333064s
+Duration for SET 100,000, 4 threads: 7.187073701s
+
+Duration for Memcached GET 100,000, 4 threads, batch 40: 502.522498ms
+Duration for Memcached GET 100,000, 4 threads, batch 40: 503.977344ms
+Duration for Memcached GET 100,000, 4 threads, batch 40: 506.371737ms
+
+Duration for Memcached GET 100,000, 4 threads, batch 20: 600.627007ms
+Duration for Memcached GET 100,000, 4 threads, batch 20: 581.149874ms
+
+Duration for Memcached GET 100,000, 4 threads, batch 100: 440.065677ms
+Duration for Memcached GET 100,000, 4 threads, batch 100: 437.093996ms
