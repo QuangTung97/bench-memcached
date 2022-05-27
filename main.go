@@ -222,6 +222,8 @@ func benchMCGetBatch() {
 	const numThreads = 4
 	wg.Add(numThreads)
 
+	const batchKeys = 40
+
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
 		const perThread = 100000
@@ -231,7 +233,6 @@ func benchMCGetBatch() {
 			defer wg.Done()
 			total := 0
 			for i := startIndex; i < endIndex; {
-				const batchKeys = 100
 				keys := make([]string, 0, batchKeys)
 				for k := 0; k < batchKeys; k++ {
 					key := fmt.Sprintf("KEY%07d", i+1)
@@ -251,16 +252,16 @@ func benchMCGetBatch() {
 	}
 	wg.Wait()
 
-	fmt.Println("Duration for Memcached GET 100,000, 4 threads:", time.Since(start))
+	fmt.Printf("Duration for Memcached GET 100,000, %d threads, batch %d: %v\n", numThreads, batchKeys, time.Since(start))
 }
 
 func main() {
 	//benchMemcachedSet()
 	//benchMemcachedGetBatch()
 
-	benchRedisSet()
-	benchRedisGetBatch()
+	// benchRedisSet()
+	// benchRedisGetBatch()
 
 	//benchMCSet()
-	//benchMCGetBatch()
+	benchMCGetBatch()
 }
