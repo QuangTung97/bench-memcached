@@ -47,6 +47,8 @@ func benchMemcachedGetBatch() {
 	const numThreads = 4
 	wg.Add(numThreads)
 
+	const batchKeys = 100
+
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
 		const perThread = 100000
@@ -56,7 +58,6 @@ func benchMemcachedGetBatch() {
 			defer wg.Done()
 			total := 0
 			for i := startIndex; i < endIndex; {
-				const batchKeys = 40
 				keys := make([]string, 0, batchKeys)
 				for k := 0; k < batchKeys; k++ {
 					key := fmt.Sprintf("KEY%07d", i+1)
@@ -75,7 +76,7 @@ func benchMemcachedGetBatch() {
 	}
 	wg.Wait()
 
-	fmt.Println("Duration for Memcached GET 100,000, 4 threads:", time.Since(start))
+	fmt.Printf("Duration for Bradfitz Memcached GET 100,000, %d threads, batch %d: %v\n", numThreads, batchKeys, time.Since(start))
 }
 
 func benchRedisSet() {
@@ -145,8 +146,12 @@ func benchRedisGetBatch() {
 	client := redis.NewClient(&redis.Options{})
 
 	var wg sync.WaitGroup
-	const numThreads = 4
+	const numThreads = 8
 	wg.Add(numThreads)
+
+	fmt.Println("NUM Threads:", numThreads)
+
+	const batchKeys = 500
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -157,7 +162,6 @@ func benchRedisGetBatch() {
 			defer wg.Done()
 			total := 0
 			for i := startIndex; i < endIndex; {
-				const batchKeys = 100
 				keys := make([]string, 0, batchKeys)
 				for k := 0; k < batchKeys; k++ {
 					key := fmt.Sprintf("KEY%07d", i+1)
@@ -176,11 +180,12 @@ func benchRedisGetBatch() {
 	}
 	wg.Wait()
 
-	fmt.Println("Duration for Redis GET 100,000, 4 threads:", time.Since(start))
+	fmt.Printf("Duration for Redis GET 100,000, %d threads, batch %d: %v\n",
+		numThreads, batchKeys, time.Since(start))
 }
 
 func benchMCSet() {
-	mc, err := gocache.New("localhost:11211", 1)
+	mc, err := gocache.New("localhost:11211", 1, gocache.WithBufferSize(128*1024))
 	if err != nil {
 		panic(err)
 	}
@@ -213,16 +218,19 @@ func benchMCSet() {
 }
 
 func benchMCGetBatch() {
-	mc, err := gocache.New("localhost:11211", 1)
+	const numConns = 8
+	fmt.Println("My memcache num conns:", numConns)
+
+	mc, err := gocache.New("localhost:11211", numConns, gocache.WithBufferSize(64*1024))
 	if err != nil {
 		panic(err)
 	}
 
 	var wg sync.WaitGroup
-	const numThreads = 4
+	const numThreads = 8
 	wg.Add(numThreads)
 
-	const batchKeys = 40
+	const batchKeys = 500
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -242,8 +250,14 @@ func benchMCGetBatch() {
 				total += len(keys)
 
 				p := mc.Pipeline()
+				var fn func() (gocache.MGetResponse, error)
 				for _, k := range keys {
-					p.MGet(k, gocache.MGetOptions{})
+					fn = p.MGet(k, gocache.MGetOptions{})
+				}
+
+				_, err := fn()
+				if err != nil {
+					panic(err)
 				}
 				p.Finish()
 			}
@@ -252,15 +266,15 @@ func benchMCGetBatch() {
 	}
 	wg.Wait()
 
-	fmt.Printf("Duration for Memcached GET 100,000, %d threads, batch %d: %v\n", numThreads, batchKeys, time.Since(start))
+	fmt.Printf("Duration for My Memcached GET 100,000, %d threads, batch %d: %v\n", numThreads, batchKeys, time.Since(start))
 }
 
 func main() {
 	//benchMemcachedSet()
 	//benchMemcachedGetBatch()
 
-	// benchRedisSet()
-	// benchRedisGetBatch()
+	//benchRedisSet()
+	//benchRedisGetBatch()
 
 	//benchMCSet()
 	benchMCGetBatch()

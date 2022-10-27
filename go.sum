@@ -1,6 +1,6 @@
 github.com/BurntSushi/toml v1.0.0/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
-github.com/QuangTung97/go-memcache v0.3.1 h1:Fev6FWNFF54zLqrRSICuSPZQONlRo3q9bVOEFlOUVRs=
-github.com/QuangTung97/go-memcache v0.3.1/go.mod h1:oXGLtsPm6a0rqaUt4wW4xSHhdL63nEbHkWJINmHVn5E=
+github.com/QuangTung97/go-memcache v0.3.3 h1:MvoSzRPU3KU1eSPjo4nPSC+9MeInfyOeMZiIyv+eUds=
+github.com/QuangTung97/go-memcache v0.3.3/go.mod h1:oXGLtsPm6a0rqaUt4wW4xSHhdL63nEbHkWJINmHVn5E=
 github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b h1:L/QXpzIa3pOvUGt1D1lA5KjYhPBAN/3iWdP7xeFS9F0=
 github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b/go.mod h1:H0wQNHz2YrLsuXOZozoeDmnHXkNCRmMW0gwFWDfEZDA=
 github.com/cespare/xxhash/v2 v2.1.2 h1:YRXhKfTDauu4ajMg1TPgFO5jnlC2HCbmLXMcTG5cbYE=

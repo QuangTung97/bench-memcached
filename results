@@ -41,12 +41,59 @@ Duration for Redis GET 100,000, 4 threads, batch 40: 335.921752ms
 Duration for Redis GET 100,000, 4 threads, batch 40: 313.514141ms
 Duration for Redis GET 100,000, 4 threads, batch 40: 310.676707ms
 
+NUM Threads: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for Redis GET 100,000, 8 threads, batch 100: 525.063377ms
+
+NUM Threads: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for Redis GET 100,000, 8 threads, batch 100: 530.500872ms
+
+NUM Threads: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for Redis GET 100,000, 8 threads, batch 500: 432.935789ms
+
+NUM Threads: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for Redis GET 100,000, 8 threads, batch 500: 471.693942ms
+
 //============================
 // My Memcache Client Result
 //============================
 Duration for SET 100,000, 4 threads: 6.906217738s
 Duration for SET 100,000, 4 threads: 7.442333064s
 Duration for SET 100,000, 4 threads: 7.187073701s
+
+// Old Version
+Duration for Memcached SET 100,000, 4 threads: 7.931201984s
 
 Duration for Memcached GET 100,000, 4 threads, batch 40: 502.522498ms
 Duration for Memcached GET 100,000, 4 threads, batch 40: 503.977344ms
@@ -57,3 +104,88 @@ Duration for Memcached GET 100,000, 4 threads, batch 20: 581.149874ms
 
 Duration for Memcached GET 100,000, 4 threads, batch 100: 440.065677ms
 Duration for Memcached GET 100,000, 4 threads, batch 100: 437.093996ms
+
+// Old Version
+My memcache num conns: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 100: 575.261239ms
+
+My memcache num conns: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 100: 637.334709ms
+
+My memcache num conns: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 100: 546.772628ms
+
+// New Version
+My memcache num conns: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 4 threads, batch 100: 342.698157ms
+
+My memcache num conns: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 4 threads, batch 100: 353.651389ms
+
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 4 threads, batch 500: 249.900715ms
+
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 4 threads, batch 500: 253.768105ms
+
+My memcache num conns: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 500: 432.258204ms
+
+My memcache num conns: 8
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 500: 428.645695ms
