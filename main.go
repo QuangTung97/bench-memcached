@@ -6,6 +6,9 @@ import (
 	gocache "github.com/QuangTung97/go-memcache/memcache"
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/go-redis/redis/v8"
+	"net/http"
+	"net/http/pprof"
+	"strings"
 	"sync"
 	"time"
 )
@@ -44,10 +47,13 @@ func benchMemcachedGetBatch() {
 	mc := memcache.New("localhost:11211")
 
 	var wg sync.WaitGroup
-	const numThreads = 4
+	const numThreads = 16
+
+	mc.MaxIdleConns = numThreads
+
 	wg.Add(numThreads)
 
-	const batchKeys = 100
+	const batchKeys = 50
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -191,8 +197,10 @@ func benchMCSet() {
 	}
 
 	var wg sync.WaitGroup
-	const numThreads = 4
+	const numThreads = 16
 	wg.Add(numThreads)
+
+	valuePrefix := strings.Repeat("ABCDE", 200/5)
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -205,7 +213,8 @@ func benchMCSet() {
 				p := mc.Pipeline()
 
 				key := fmt.Sprintf("KEY%07d", i+1)
-				value := []byte(fmt.Sprintf("VALUE:%07d", i+1))
+
+				value := []byte(fmt.Sprintf("%s:%07d", valuePrefix, i+1))
 				p.MSet(key, value, gocache.MSetOptions{})
 
 				p.Finish()
@@ -214,23 +223,29 @@ func benchMCSet() {
 	}
 	wg.Wait()
 
-	fmt.Println("Duration for Memcached SET 100,000, 4 threads:", time.Since(start))
+	fmt.Printf("Duration for Memcached SET 100,000, %d threads: %v\n", numThreads, time.Since(start))
 }
 
 func benchMCGetBatch() {
-	const numConns = 8
+	const numConns = 4
 	fmt.Println("My memcache num conns:", numConns)
 
 	mc, err := gocache.New("localhost:11211", numConns, gocache.WithBufferSize(64*1024))
 	if err != nil {
 		panic(err)
 	}
+	defer func() {
+		err := mc.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
 
 	var wg sync.WaitGroup
-	const numThreads = 8
+	const numThreads = 16
 	wg.Add(numThreads)
 
-	const batchKeys = 500
+	const batchKeys = 50
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -255,10 +270,15 @@ func benchMCGetBatch() {
 					fn = p.MGet(k, gocache.MGetOptions{})
 				}
 
-				_, err := fn()
+				resp, err := fn()
 				if err != nil {
 					panic(err)
 				}
+
+				if len(resp.Data) != 200+8 {
+					panic(len(resp.Data))
+				}
+
 				p.Finish()
 			}
 			fmt.Println("TOTAL:", total)
@@ -266,16 +286,31 @@ func benchMCGetBatch() {
 	}
 	wg.Wait()
 
-	fmt.Printf("Duration for My Memcached GET 100,000, %d threads, batch %d: %v\n", numThreads, batchKeys, time.Since(start))
+	fmt.Printf("Duration for My Memcached GET 100,000, %d threads, batch %d: %v\n",
+		numThreads, batchKeys, time.Since(start))
+}
+
+func runServer() {
+	http.Handle("/debug/pprof/heap", pprof.Handler("heap"))
+	err := http.ListenAndServe(":10090", nil)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
+	go runServer()
 	//benchMemcachedSet()
-	//benchMemcachedGetBatch()
+	//for i := 0; i < 100; i++ {
+	//	benchMemcachedGetBatch()
+	//}
 
 	//benchRedisSet()
 	//benchRedisGetBatch()
 
 	//benchMCSet()
-	benchMCGetBatch()
+
+	//for i := 0; i < 100; i++ {
+	//	benchMCGetBatch()
+	//}
 }
