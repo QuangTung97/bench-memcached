@@ -47,13 +47,13 @@ func benchMemcachedGetBatch() {
 	mc := memcache.New("localhost:11211")
 
 	var wg sync.WaitGroup
-	const numThreads = 16
+	const numThreads = 32
 
 	mc.MaxIdleConns = numThreads
 
 	wg.Add(numThreads)
 
-	const batchKeys = 50
+	const batchKeys = 10
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -197,7 +197,7 @@ func benchMCSet() {
 	}
 
 	var wg sync.WaitGroup
-	const numThreads = 16
+	const numThreads = 32
 	wg.Add(numThreads)
 
 	valuePrefix := strings.Repeat("ABCDE", 200/5)
@@ -230,7 +230,10 @@ func benchMCGetBatch() {
 	const numConns = 4
 	fmt.Println("My memcache num conns:", numConns)
 
-	mc, err := gocache.New("localhost:11211", numConns, gocache.WithBufferSize(64*1024))
+	mc, err := gocache.New("localhost:11211", numConns,
+		gocache.WithBufferSize(64*1024),
+		gocache.WithTCPKeepAliveDuration(10*time.Second),
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -242,10 +245,10 @@ func benchMCGetBatch() {
 	}()
 
 	var wg sync.WaitGroup
-	const numThreads = 16
+	const numThreads = 8
 	wg.Add(numThreads)
 
-	const batchKeys = 50
+	const batchKeys = 40
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -300,8 +303,9 @@ func runServer() {
 
 func main() {
 	go runServer()
+
 	//benchMemcachedSet()
-	//for i := 0; i < 100; i++ {
+	//for i := 0; i < 3; i++ {
 	//	benchMemcachedGetBatch()
 	//}
 
@@ -309,8 +313,8 @@ func main() {
 	//benchRedisGetBatch()
 
 	//benchMCSet()
-
-	//for i := 0; i < 100; i++ {
-	//	benchMCGetBatch()
-	//}
+	//
+	for i := 0; i < 30; i++ {
+		benchMCGetBatch()
+	}
 }
