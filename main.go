@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 	gocache "github.com/QuangTung97/go-memcache/memcache"
+	cachestats "github.com/QuangTung97/go-memcache/memcache/stats"
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/go-redis/redis/v8"
 	"net/http"
 	"net/http/pprof"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -248,7 +250,7 @@ func benchMCGetBatch() {
 	const numThreads = 8
 	wg.Add(numThreads)
 
-	const batchKeys = 40
+	const batchKeys = 100
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -302,6 +304,10 @@ func runServer() {
 }
 
 func main() {
+	// memory ballast
+	data := make([]byte, 3<<30)
+	runtime.KeepAlive(data)
+
 	go runServer()
 
 	//benchMemcachedSet()
@@ -312,9 +318,20 @@ func main() {
 	//benchRedisSet()
 	//benchRedisGetBatch()
 
-	//benchMCSet()
-	//
-	for i := 0; i < 30; i++ {
+	benchMCSet()
+
+	for i := 0; i < 10; i++ {
 		benchMCGetBatch()
 	}
+}
+
+func dumpKeys() {
+	totalKeys := 0
+
+	client := cachestats.New("localhost:11211")
+	err := client.MetaDumpAll(func(key cachestats.MetaDumpKey) {
+		totalKeys++
+	})
+
+	fmt.Println(err, totalKeys)
 }

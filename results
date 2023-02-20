@@ -208,6 +208,7 @@ Duration for My Memcached GET 100,000, 8 threads, batch 500: 428.645695ms
 My memcache num conns: 8
 Duration for My Memcached GET 100,000, 8 threads, batch 500: 502.697745ms
 
+
 My memcache num conns: 8
 TOTAL: 100000
 TOTAL: 100000
@@ -241,3 +242,70 @@ TOTAL: 100000
 TOTAL: 100000
 TOTAL: 100000
 Duration for My Memcached GET 100,000, 8 threads, batch 40: 837.65352ms
+
+
+============================================
+// With Memory Ballast
+============================================
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 40: 549.166162ms
+
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 500: 395.074874ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 500: 398.72179ms
+
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 100: 425.582968ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 100: 417.023307ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 100: 420.044126ms
