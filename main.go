@@ -318,7 +318,7 @@ func main() {
 	//benchRedisSet()
 	//benchRedisGetBatch()
 
-	benchMCSet()
+	//benchMCSet()
 
 	for i := 0; i < 10; i++ {
 		benchMCGetBatch()
