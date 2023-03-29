@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/pprof"
 	"runtime"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -295,6 +296,93 @@ func benchMCGetBatch() {
 		numThreads, batchKeys, time.Since(start))
 }
 
+func benchMCGetBatchWithLatency() {
+	const numConns = 4
+	fmt.Println("My memcache num conns:", numConns)
+
+	mc, err := gocache.New("localhost:11211", numConns,
+		gocache.WithBufferSize(64*1024),
+		gocache.WithTCPKeepAliveDuration(10*time.Second),
+	)
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		err := mc.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	var wg sync.WaitGroup
+	const numThreads = 8
+	wg.Add(numThreads)
+
+	const perThread = 100000
+
+	const batchKeys = 40
+
+	var mut sync.Mutex
+	durations := make([]time.Duration, 0, numThreads*perThread)
+
+	start := time.Now()
+	for thread := 0; thread < numThreads; thread++ {
+		startIndex := thread * perThread
+		endIndex := (thread + 1) * perThread
+		go func() {
+			defer wg.Done()
+			total := 0
+			for i := startIndex; i < endIndex; {
+				keys := make([]string, 0, batchKeys)
+				for k := 0; k < batchKeys; k++ {
+					key := fmt.Sprintf("KEY%07d", i+1)
+					keys = append(keys, key)
+					i++
+				}
+				total += len(keys)
+
+				p := mc.Pipeline()
+
+				getStart := time.Now()
+				var fn func() (gocache.MGetResponse, error)
+				for _, k := range keys {
+					fn = p.MGet(k, gocache.MGetOptions{})
+				}
+
+				resp, err := fn()
+				if err != nil {
+					panic(err)
+				}
+				duration := time.Since(getStart)
+
+				mut.Lock()
+				durations = append(durations, duration)
+				mut.Unlock()
+
+				if len(resp.Data) != 200+8 {
+					panic(len(resp.Data))
+				}
+
+				p.Finish()
+			}
+			fmt.Println("TOTAL:", total)
+		}()
+	}
+	wg.Wait()
+
+	fmt.Printf("Duration for My Memcached GET 100,000, %d threads, batch %d: %v\n",
+		numThreads, batchKeys, time.Since(start))
+
+	sort.Slice(durations, func(i, j int) bool {
+		return durations[i] < durations[j]
+	})
+
+	n := len(durations)
+	fmt.Println("MIN DURATION:", durations[0])
+	fmt.Println("MEAN DURATION:", durations[n/2])
+	fmt.Println("MAX DURATION:", durations[n-1])
+}
+
 func runServer() {
 	http.Handle("/debug/pprof/heap", pprof.Handler("heap"))
 	err := http.ListenAndServe(":10090", nil)
@@ -306,7 +394,9 @@ func runServer() {
 func main() {
 	// memory ballast
 	data := make([]byte, 3<<30)
-	runtime.KeepAlive(data)
+	defer func() {
+		runtime.KeepAlive(data)
+	}()
 
 	go runServer()
 
