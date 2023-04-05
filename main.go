@@ -193,6 +193,8 @@ func benchRedisGetBatch() {
 		numThreads, batchKeys, time.Since(start))
 }
 
+const valueSize = 400
+
 func benchMCSet() {
 	mc, err := gocache.New("localhost:11211", 1, gocache.WithBufferSize(128*1024))
 	if err != nil {
@@ -200,10 +202,10 @@ func benchMCSet() {
 	}
 
 	var wg sync.WaitGroup
-	const numThreads = 32
+	const numThreads = 16
 	wg.Add(numThreads)
 
-	valuePrefix := strings.Repeat("ABCDE", 200/5)
+	valuePrefix := strings.Repeat("ABCDE", valueSize/5)
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -229,7 +231,7 @@ func benchMCSet() {
 	fmt.Printf("Duration for Memcached SET 100,000, %d threads: %v\n", numThreads, time.Since(start))
 }
 
-func benchMCGetBatch() {
+func benchMCGetBatch() float64 {
 	const numConns = 4
 	fmt.Println("My memcache num conns:", numConns)
 
@@ -251,7 +253,7 @@ func benchMCGetBatch() {
 	const numThreads = 8
 	wg.Add(numThreads)
 
-	const batchKeys = 100
+	const batchKeys = 40
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -281,7 +283,7 @@ func benchMCGetBatch() {
 					panic(err)
 				}
 
-				if len(resp.Data) != 200+8 {
+				if len(resp.Data) != valueSize+8 {
 					panic(len(resp.Data))
 				}
 
@@ -292,8 +294,9 @@ func benchMCGetBatch() {
 	}
 	wg.Wait()
 
-	fmt.Printf("Duration for My Memcached GET 100,000, %d threads, batch %d: %v\n",
-		numThreads, batchKeys, time.Since(start))
+	d := time.Since(start)
+	fmt.Printf("Duration for My Memcached GET 100,000, %d threads, batch %d: %v\n", numThreads, batchKeys, d)
+	return d.Seconds() * 1000
 }
 
 func benchMCGetBatchWithLatency() {
@@ -359,7 +362,7 @@ func benchMCGetBatchWithLatency() {
 				durations = append(durations, duration)
 				mut.Unlock()
 
-				if len(resp.Data) != 200+8 {
+				if len(resp.Data) != valueSize+8 {
 					panic(len(resp.Data))
 				}
 
@@ -408,11 +411,13 @@ func main() {
 	//benchRedisSet()
 	//benchRedisGetBatch()
 
-	//benchMCSet()
+	// benchMCSet()
 
+	sum := float64(0)
 	for i := 0; i < 10; i++ {
-		benchMCGetBatch()
+		sum += benchMCGetBatch()
 	}
+	fmt.Println("AVG ALL:", sum/10.0)
 }
 
 func dumpKeys() {
