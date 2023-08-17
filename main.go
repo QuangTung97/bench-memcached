@@ -97,8 +97,10 @@ func benchRedisSet() {
 	client := redis.NewClient(&redis.Options{})
 
 	var wg sync.WaitGroup
-	const numThreads = 4
+	const numThreads = 8
 	wg.Add(numThreads)
+
+	valuePrefix := strings.Repeat("ABCDE", valueSize/5)
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -109,7 +111,7 @@ func benchRedisSet() {
 			defer wg.Done()
 			for i := startIndex; i < endIndex; i++ {
 				key := fmt.Sprintf("KEY%07d", i+1)
-				value := fmt.Sprintf("VALUE:%07d", i+1)
+				value := fmt.Sprintf("%s:%07d", valuePrefix, i+1)
 
 				err := client.Set(context.Background(), key, value, 0).Err()
 				if err != nil {
@@ -156,7 +158,7 @@ func benchRedisGet() {
 	fmt.Println("Duration for Redis GET 100,000, 4 threads:", time.Since(start))
 }
 
-func benchRedisGetBatch() {
+func benchRedisGetBatch() float64 {
 	client := redis.NewClient(&redis.Options{})
 
 	var wg sync.WaitGroup
@@ -165,7 +167,7 @@ func benchRedisGetBatch() {
 
 	fmt.Println("NUM Threads:", numThreads)
 
-	const batchKeys = 500
+	const batchKeys = 40
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -174,6 +176,7 @@ func benchRedisGetBatch() {
 		endIndex := (thread + 1) * perThread
 		go func() {
 			defer wg.Done()
+
 			total := 0
 			for i := startIndex; i < endIndex; {
 				keys := make([]string, 0, batchKeys)
@@ -194,8 +197,10 @@ func benchRedisGetBatch() {
 	}
 	wg.Wait()
 
+	d := time.Since(start)
 	fmt.Printf("Duration for Redis GET 100,000, %d threads, batch %d: %v\n",
-		numThreads, batchKeys, time.Since(start))
+		numThreads, batchKeys, d)
+	return d.Seconds() * 1000
 }
 
 const valueSize = 400
@@ -404,18 +409,19 @@ func runServer() {
 func main() {
 	go runServer()
 
-	//benchMemcachedSet()
+	// benchMemcachedSet()
 	// benchMyMemcacheClientSet()
 
-	//benchRedisSet()
-	//benchRedisGetBatch()
+	// benchRedisSet()
+	// benchRedisGetBatch()
 
 	sum := float64(0)
 	const numLoops = 30
 
 	for i := 0; i < numLoops; i++ {
-		sum += benchMyMemcacheClientGetBatch()
+		// sum += benchMyMemcacheClientGetBatch()
 		// sum += benchBradfitzMemcachedGetBatch()
+		sum += benchRedisGetBatch()
 	}
 	fmt.Println("AVG ALL:", sum/float64(numLoops))
 }
