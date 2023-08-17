@@ -3,7 +3,7 @@ module benchmemcached
 go 1.19
 
 require (
-	github.com/QuangTung97/go-memcache v0.5.6
+	github.com/QuangTung97/go-memcache v0.5.8-0.20230817064116-9984021b46a3
 	github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b
 	github.com/go-redis/redis/v8 v8.11.4
 )

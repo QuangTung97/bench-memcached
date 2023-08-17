@@ -122,3 +122,118 @@ TOTAL: 100000
 TOTAL: 100000
 TOTAL: 100000
 Duration for My Memcached GET 100,000, 8 threads, batch 40: 505.606698ms
+
+==========================================================================
+Bradfitz Memcache With GOMEMLIMIT=512MiB
+==========================================================================
+Duration for Bradfitz Memcached GET 100,000, 8 threads, batch 40: 1.535909688s
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for Bradfitz Memcached GET 100,000, 8 threads, batch 40: 1.551400284s
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for Bradfitz Memcached GET 100,000, 8 threads, batch 40: 1.628278211s
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for Bradfitz Memcached GET 100,000, 8 threads, batch 40: 1.535113708s
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for Bradfitz Memcached GET 100,000, 8 threads, batch 40: 1.487929596s
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for Bradfitz Memcached GET 100,000, 8 threads, batch 40: 1.520226668s
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for Bradfitz Memcached GET 100,000, 8 threads, batch 40: 1.491944589s
+AVG ALL: 1.4165713571333332
+
+==========================================================================
+Bradfitz Memcache With GOMEMLIMIT=512MiB
+==========================================================================
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 40: 672.405282ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 40: 670.185068ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 40: 703.859766ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 40: 700.785073ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 40: 640.409737ms
+AVG ALL: 666.4393019666664

@@ -9,7 +9,6 @@ import (
 	"github.com/go-redis/redis/v8"
 	"net/http"
 	"net/http/pprof"
-	"runtime"
 	"sort"
 	"strings"
 	"sync"
@@ -46,17 +45,17 @@ func benchMemcachedSet() {
 	fmt.Println("Duration for Memcached SET 100,000, 4 threads:", time.Since(start))
 }
 
-func benchMemcachedGetBatch() {
+func benchBradfitzMemcachedGetBatch() float64 {
 	mc := memcache.New("localhost:11211")
 
 	var wg sync.WaitGroup
-	const numThreads = 32
+	const numThreads = 8
 
 	mc.MaxIdleConns = numThreads
 
 	wg.Add(numThreads)
 
-	const batchKeys = 10
+	const batchKeys = 40
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -85,7 +84,13 @@ func benchMemcachedGetBatch() {
 	}
 	wg.Wait()
 
-	fmt.Printf("Duration for Bradfitz Memcached GET 100,000, %d threads, batch %d: %v\n", numThreads, batchKeys, time.Since(start))
+	duration := time.Since(start)
+	fmt.Printf(
+		"Duration for Bradfitz Memcached GET 100,000, %d threads, batch %d: %v\n",
+		numThreads, batchKeys, duration,
+	)
+
+	return duration.Seconds() * 1000
 }
 
 func benchRedisSet() {
@@ -195,7 +200,7 @@ func benchRedisGetBatch() {
 
 const valueSize = 400
 
-func benchMCSet() {
+func benchMyMemcacheClientSet() {
 	mc, err := gocache.New("localhost:11211", 1, gocache.WithBufferSize(128*1024))
 	if err != nil {
 		panic(err)
@@ -231,7 +236,7 @@ func benchMCSet() {
 	fmt.Printf("Duration for Memcached SET 100,000, %d threads: %v\n", numThreads, time.Since(start))
 }
 
-func benchMCGetBatch() float64 {
+func benchMyMemcacheClientGetBatch() float64 {
 	const numConns = 4
 	fmt.Println("My memcache num conns:", numConns)
 
@@ -300,7 +305,7 @@ func benchMCGetBatch() float64 {
 }
 
 func benchMCGetBatchWithLatency() {
-	const numConns = 4
+	const numConns = 8
 	fmt.Println("My memcache num conns:", numConns)
 
 	mc, err := gocache.New("localhost:11211", numConns,
@@ -383,6 +388,8 @@ func benchMCGetBatchWithLatency() {
 	n := len(durations)
 	fmt.Println("MIN DURATION:", durations[0])
 	fmt.Println("MEAN DURATION:", durations[n/2])
+	fmt.Println("P99:", durations[int(float64(n-1)*0.99)])
+
 	fmt.Println("MAX DURATION:", durations[n-1])
 }
 
@@ -395,29 +402,22 @@ func runServer() {
 }
 
 func main() {
-	// memory ballast
-	data := make([]byte, 3<<30)
-	defer func() {
-		runtime.KeepAlive(data)
-	}()
-
 	go runServer()
 
 	//benchMemcachedSet()
-	//for i := 0; i < 3; i++ {
-	//	benchMemcachedGetBatch()
-	//}
+	// benchMyMemcacheClientSet()
 
 	//benchRedisSet()
 	//benchRedisGetBatch()
 
-	// benchMCSet()
-
 	sum := float64(0)
-	for i := 0; i < 10; i++ {
-		sum += benchMCGetBatch()
+	const numLoops = 30
+
+	for i := 0; i < numLoops; i++ {
+		sum += benchMyMemcacheClientGetBatch()
+		// sum += benchBradfitzMemcachedGetBatch()
 	}
-	fmt.Println("AVG ALL:", sum/10.0)
+	fmt.Println("AVG ALL:", sum/float64(numLoops))
 }
 
 func dumpKeys() {
