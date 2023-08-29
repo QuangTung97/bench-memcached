@@ -169,7 +169,7 @@ func benchRedisGetBatch() float64 {
 
 	fmt.Println("NUM Threads:", numThreads)
 
-	const batchKeys = 40
+	const batchKeys = 160
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -265,7 +265,7 @@ func benchMyMemcacheClientGetBatch() float64 {
 	const numThreads = 8
 	wg.Add(numThreads)
 
-	const batchKeys = 40
+	const batchKeys = 160
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -287,7 +287,10 @@ func benchMyMemcacheClientGetBatch() float64 {
 				p := mc.Pipeline()
 				var fn func() (gocache.MGetResponse, error)
 				for _, k := range keys {
-					fn = p.MGet(k, gocache.MGetOptions{})
+					fn = p.MGet(k, gocache.MGetOptions{
+						N:   3,
+						CAS: true,
+					})
 				}
 
 				resp, err := fn()
