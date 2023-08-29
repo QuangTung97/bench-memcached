@@ -4,7 +4,7 @@ import "testing"
 
 func BenchmarkMemcached(b *testing.B) {
 	// benchMemcachedSet()
-	for n := 0; n < b.N; n++ {
+	for n := 0; n < 10; n++ {
 		benchMyMemcacheClientGetBatch()
 		// benchMemcachedGetBatch()
 	}
