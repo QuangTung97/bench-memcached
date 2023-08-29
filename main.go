@@ -122,7 +122,7 @@ func benchRedisSet() {
 	}
 	wg.Wait()
 
-	fmt.Println("Duration for Redis SET 100,000, 4 threads:", time.Since(start))
+	fmt.Println("Duration for Redis SET 100,000, 8 threads:", time.Since(start))
 }
 
 func benchRedisGet() {
@@ -159,7 +159,9 @@ func benchRedisGet() {
 }
 
 func benchRedisGetBatch() float64 {
-	client := redis.NewClient(&redis.Options{})
+	client := redis.NewClient(&redis.Options{
+		MinIdleConns: 8,
+	})
 
 	var wg sync.WaitGroup
 	const numThreads = 8
@@ -203,7 +205,7 @@ func benchRedisGetBatch() float64 {
 	return d.Seconds() * 1000
 }
 
-const valueSize = 400
+const valueSize = 800
 
 func benchMyMemcacheClientSet() {
 	mc, err := gocache.New("localhost:11211", 1, gocache.WithBufferSize(128*1024))
@@ -212,7 +214,7 @@ func benchMyMemcacheClientSet() {
 	}
 
 	var wg sync.WaitGroup
-	const numThreads = 16
+	const numThreads = 8
 	wg.Add(numThreads)
 
 	valuePrefix := strings.Repeat("ABCDE", valueSize/5)
@@ -409,19 +411,19 @@ func runServer() {
 func main() {
 	go runServer()
 
+	benchMyMemcacheClientSet()
 	// benchMemcachedSet()
-	// benchMyMemcacheClientSet()
-
 	// benchRedisSet()
+
 	// benchRedisGetBatch()
 
 	sum := float64(0)
 	const numLoops = 30
 
 	for i := 0; i < numLoops; i++ {
-		// sum += benchMyMemcacheClientGetBatch()
+		sum += benchMyMemcacheClientGetBatch()
 		// sum += benchBradfitzMemcachedGetBatch()
-		sum += benchRedisGetBatch()
+		// sum += benchRedisGetBatch()
 	}
 	fmt.Println("AVG ALL:", sum/float64(numLoops))
 }
