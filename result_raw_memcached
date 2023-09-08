@@ -234,3 +234,46 @@ TOTAL: 100000
 TOTAL: 100000
 Duration for My Memcached GET 100,000, 8 threads, batch 160: 449.540497ms
 AVG ALL: 437.0118947333333
+
+
+===========================================================================
+With Starvation Avoidance Algorithm
+===========================================================================
+
+===========================================================================
+./memcached -m 1024 -R 320
+WRITE LIMIT: 1600
+MAX CMD: 160
+
+Duration for My Memcached GET 100,000, 8 threads, batch 160: 465.461721ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 160: 475.359568ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 160: 468.353483ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 160: 467.287071ms
+AVG ALL: 462.26586926666664

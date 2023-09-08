@@ -184,7 +184,7 @@ Duration for Bradfitz Memcached GET 100,000, 8 threads, batch 40: 1.491944589s
 AVG ALL: 1.4165713571333332
 
 ==========================================================================
-Bradfitz Memcache With GOMEMLIMIT=512MiB, value size = 400 byte
+Memcache With GOMEMLIMIT=512MiB, value size = 400 byte
 ==========================================================================
 My memcache num conns: 4
 TOTAL: 100000
@@ -239,7 +239,7 @@ Duration for My Memcached GET 100,000, 8 threads, batch 40: 640.409737ms
 AVG ALL: 666.4393019666664
 
 ==========================================================================
-Bradfitz Memcache With GOMEMLIMIT=512MiB, value size = 400 byte
+Redis With GOMEMLIMIT=512MiB, value size = 400 byte
 ==========================================================================
 Duration for Redis GET 100,000, 8 threads, batch 40: 1.188623143s
 NUM Threads: 8

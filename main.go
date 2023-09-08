@@ -3,16 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
-	gocache "github.com/QuangTung97/go-memcache/memcache"
-	cachestats "github.com/QuangTung97/go-memcache/memcache/stats"
-	"github.com/bradfitz/gomemcache/memcache"
-	"github.com/go-redis/redis/v8"
 	"net/http"
 	"net/http/pprof"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+
+	gocache "github.com/QuangTung97/go-memcache/memcache"
+	cachestats "github.com/QuangTung97/go-memcache/memcache/stats"
+	"github.com/bradfitz/gomemcache/memcache"
+	"github.com/go-redis/redis/v8"
 )
 
 func benchMemcachedSet() {
@@ -250,6 +251,8 @@ func benchMyMemcacheClientGetBatch() float64 {
 	mc, err := gocache.New("localhost:11211", numConns,
 		gocache.WithBufferSize(64*1024),
 		gocache.WithTCPKeepAliveDuration(10*time.Second),
+		gocache.WithWriteLimit(1600),
+		gocache.WithMaxCommandsPerBatch(160),
 	)
 	if err != nil {
 		panic(err)
@@ -265,7 +268,7 @@ func benchMyMemcacheClientGetBatch() float64 {
 	const numThreads = 8
 	wg.Add(numThreads)
 
-	const batchKeys = 160
+	const batchKeys = 40
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -414,14 +417,14 @@ func runServer() {
 func main() {
 	go runServer()
 
-	benchMyMemcacheClientSet()
+	// benchMyMemcacheClientSet()
 	// benchMemcachedSet()
 	// benchRedisSet()
 
 	// benchRedisGetBatch()
 
 	sum := float64(0)
-	const numLoops = 30
+	const numLoops = 60
 
 	for i := 0; i < numLoops; i++ {
 		sum += benchMyMemcacheClientGetBatch()
