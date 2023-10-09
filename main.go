@@ -56,7 +56,7 @@ func benchBradfitzMemcachedGetBatch() float64 {
 
 	wg.Add(numThreads)
 
-	const batchKeys = 40
+	const batchKeys = 160
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -268,7 +268,7 @@ func benchMyMemcacheClientGetBatch() float64 {
 	const numThreads = 8
 	wg.Add(numThreads)
 
-	const batchKeys = 40
+	const batchKeys = 160
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
@@ -278,6 +278,9 @@ func benchMyMemcacheClientGetBatch() float64 {
 		go func() {
 			defer wg.Done()
 			total := 0
+
+			fnList := make([]gocache.MGetResult, 0, batchKeys)
+
 			for i := startIndex; i < endIndex; {
 				keys := make([]string, 0, batchKeys)
 				for k := 0; k < batchKeys; k++ {
@@ -288,21 +291,32 @@ func benchMyMemcacheClientGetBatch() float64 {
 				total += len(keys)
 
 				p := mc.Pipeline()
-				var fn func() (gocache.MGetResponse, error)
+
+				fnList = fnList[:0]
+
 				for _, k := range keys {
-					fn = p.MGet(k, gocache.MGetOptions{
+					fn, err := p.MGetFast(k, gocache.MGetOptions{
 						N:   3,
 						CAS: true,
 					})
+					if err != nil {
+						panic(err)
+					}
+					fnList = append(fnList, fn)
 				}
 
-				resp, err := fn()
-				if err != nil {
-					panic(err)
-				}
+				for _, fn := range fnList {
+					resp, err := fn.Result()
+					if err != nil {
+						panic(err)
+					}
 
-				if len(resp.Data) != valueSize+8 {
-					panic(len(resp.Data))
+					if len(resp.Data) != valueSize+8 {
+						panic(len(resp.Data))
+					}
+
+					gocache.ReleaseGetResponseData(resp.Data)
+					gocache.ReleaseMGetResult(fn)
 				}
 
 				p.Finish()
@@ -424,7 +438,7 @@ func main() {
 	// benchRedisGetBatch()
 
 	sum := float64(0)
-	const numLoops = 60
+	const numLoops = 30
 
 	for i := 0; i < numLoops; i++ {
 		sum += benchMyMemcacheClientGetBatch()
