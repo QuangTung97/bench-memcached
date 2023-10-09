@@ -244,6 +244,37 @@ func benchMyMemcacheClientSet() {
 	fmt.Printf("Duration for Memcached SET 100,000, %d threads: %v\n", numThreads, time.Since(start))
 }
 
+func computeKey(input int) string {
+	input = input + 1
+
+	var data [256]byte
+	result := data[:0]
+
+	var numberData [30]byte
+	number := numberData[:0]
+
+	if input == 0 {
+		number = append(number, '0')
+	}
+
+	for input > 0 {
+		number = append(number, '0'+byte(input%10))
+		input = input / 10
+	}
+
+	result = append(result, "KEY"...)
+
+	for i := 0; i < 7-len(number); i++ {
+		result = append(result, '0')
+	}
+
+	for i := len(number) - 1; i >= 0; i-- {
+		result = append(result, number[i])
+	}
+
+	return string(result)
+}
+
 func benchMyMemcacheClientGetBatch() float64 {
 	const numConns = 4
 	fmt.Println("My memcache num conns:", numConns)
@@ -284,7 +315,7 @@ func benchMyMemcacheClientGetBatch() float64 {
 			for i := startIndex; i < endIndex; {
 				keys := make([]string, 0, batchKeys)
 				for k := 0; k < batchKeys; k++ {
-					key := fmt.Sprintf("KEY%07d", i+1)
+					key := computeKey(i)
 					keys = append(keys, key)
 					i++
 				}

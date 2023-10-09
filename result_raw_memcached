@@ -289,3 +289,43 @@ MAX CMD: 160
 
 
 AVG ALL: 452.4601598333335
+
+===========================================================================
+With Allocs Reduction & Compute Key instead of fmt.Sprintf
+===========================================================================
+./memcached -m 1024 -R 320
+WRITE LIMIT: 1600
+MAX CMD: 160
+
+Duration for My Memcached GET 100,000, 8 threads, batch 160: 381.157774ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 160: 370.079824ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 160: 375.298471ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 160: 367.749057ms
+AVG ALL: 371.7486647
