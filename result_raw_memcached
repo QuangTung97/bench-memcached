@@ -544,3 +544,48 @@ AVG ALL: 205.99842626666668
 AVG QPS: 5825287.22
 
 => 13.324 Gpbs
+
+
+===========================================================================
+With Allocs Reduction & Compute Key instead of fmt.Sprintf
+===========================================================================
+./memcached -m 3048 -t 12 -R 320
+WRITE LIMIT: 1600
+MAX CMD: 160
+WITH GOMEMLIMIT=512MiB
+Value Size: 1607
+
+
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 435.198352ms
+My memcache num conns: 12
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 420.166554ms
+My memcache num conns: 12
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 421.05842ms
+AVG ALL: 431.74429293333327
+AVG QPS: 2779422.96
+
+=> 33.278 Gpbs

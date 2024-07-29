@@ -98,14 +98,14 @@ func benchRedisSet() {
 	client := redis.NewClient(&redis.Options{})
 
 	var wg sync.WaitGroup
-	const numThreads = 8
+	const numThreads = 16
 	wg.Add(numThreads)
 
 	valuePrefix := strings.Repeat("ABCDE", valueSize/5)
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
-		const perThread = 100000
+		const perThread = 100_000
 		startIndex := thread * perThread
 		endIndex := (thread + 1) * perThread
 		go func() {
@@ -161,20 +161,20 @@ func benchRedisGet() {
 
 func benchRedisGetBatch() float64 {
 	client := redis.NewClient(&redis.Options{
-		MinIdleConns: 8,
+		MinIdleConns: 12,
 	})
 
 	var wg sync.WaitGroup
-	const numThreads = 8
+	const numThreads = 12
 	wg.Add(numThreads)
 
 	fmt.Println("NUM Threads:", numThreads)
 
-	const batchKeys = 160
+	const batchKeys = 80
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
-		const perThread = 100000
+		const perThread = 100_000
 		startIndex := thread * perThread
 		endIndex := (thread + 1) * perThread
 		go func() {
@@ -184,7 +184,7 @@ func benchRedisGetBatch() float64 {
 			for i := startIndex; i < endIndex; {
 				keys := make([]string, 0, batchKeys)
 				for k := 0; k < batchKeys; k++ {
-					key := fmt.Sprintf("KEY%07d", i+1)
+					key := computeKey(i)
 					keys = append(keys, key)
 					i++
 				}
@@ -206,7 +206,7 @@ func benchRedisGetBatch() float64 {
 	return d.Seconds() * 1000
 }
 
-const valueSize = 300
+const valueSize = 1600
 
 func benchMyMemcacheClientSet() {
 	mc, err := gocache.New("localhost:11211", 1, gocache.WithBufferSize(128*1024))
