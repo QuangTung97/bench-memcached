@@ -206,7 +206,7 @@ func benchRedisGetBatch() float64 {
 	return d.Seconds() * 1000
 }
 
-const valueSize = 800
+const valueSize = 300
 
 func benchMyMemcacheClientSet() {
 	mc, err := gocache.New("localhost:11211", 1, gocache.WithBufferSize(128*1024))
@@ -215,7 +215,7 @@ func benchMyMemcacheClientSet() {
 	}
 
 	var wg sync.WaitGroup
-	const numThreads = 8
+	const numThreads = 16
 	wg.Add(numThreads)
 
 	valuePrefix := strings.Repeat("ABCDE", valueSize/5)
@@ -276,7 +276,7 @@ func computeKey(input int) string {
 }
 
 func benchMyMemcacheClientGetBatch() float64 {
-	const numConns = 4
+	const numConns = 12
 	fmt.Println("My memcache num conns:", numConns)
 
 	mc, err := gocache.New("localhost:11211", numConns,
@@ -296,14 +296,14 @@ func benchMyMemcacheClientGetBatch() float64 {
 	}()
 
 	var wg sync.WaitGroup
-	const numThreads = 8
+	const numThreads = 12
 	wg.Add(numThreads)
 
-	const batchKeys = 160
+	const batchKeys = 80
 
 	start := time.Now()
 	for thread := 0; thread < numThreads; thread++ {
-		const perThread = 100000
+		const perThread = 100_000
 		startIndex := thread * perThread
 		endIndex := (thread + 1) * perThread
 		go func() {
@@ -460,9 +460,9 @@ func runServer() {
 }
 
 func main() {
-	go runServer()
+	// go runServer()
 
-	// benchMyMemcacheClientSet()
+	benchMyMemcacheClientSet()
 	// benchMemcachedSet()
 	// benchRedisSet()
 
@@ -476,7 +476,10 @@ func main() {
 		// sum += benchBradfitzMemcachedGetBatch()
 		// sum += benchRedisGetBatch()
 	}
-	fmt.Println("AVG ALL:", sum/float64(numLoops))
+
+	avgAll := sum / float64(numLoops)
+	fmt.Println("AVG ALL:", avgAll)
+	fmt.Printf("AVG QPS: %.2f\n", 12*100_000.0*1000.0/avgAll)
 }
 
 func dumpKeys() {

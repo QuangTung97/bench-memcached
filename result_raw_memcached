@@ -329,3 +329,218 @@ TOTAL: 100000
 TOTAL: 100000
 Duration for My Memcached GET 100,000, 8 threads, batch 160: 367.749057ms
 AVG ALL: 371.7486647
+
+
+
+===========================================================================
+With Allocs Reduction & Compute Key instead of fmt.Sprintf
+===========================================================================
+./memcached -m 1024 -R 320
+WRITE LIMIT: 1600
+MAX CMD: 160
+
+Duration for My Memcached GET 100,000, 8 threads, batch 40: 248.879391ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 40: 253.576646ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 40: 250.981435ms
+My memcache num conns: 4
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 8 threads, batch 40: 252.402109ms
+AVG ALL: 252.09088239999997
+AVG QPS: 3.173458684358987e+06
+
+
+===========================================================================
+With Allocs Reduction & Compute Key instead of fmt.Sprintf
+===========================================================================
+./memcached -m 1024 -t 12 -R 320
+WRITE LIMIT: 1600
+MAX CMD: 160
+
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 328.096664ms
+My memcache num conns: 12
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 321.993995ms
+My memcache num conns: 12
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 327.519733ms
+AVG ALL: 328.4945945666667
+AVG QPS: 3653028.15
+=> 21.96 Gbps
+
+
+===========================================================================
+With Allocs Reduction & Compute Key instead of fmt.Sprintf
+===========================================================================
+./memcached -m 1024 -t 12 -R 320
+WRITE LIMIT: 1600
+MAX CMD: 160
+WITH GOMEMLIMIT=512MiB
+Value Size: 807
+
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 303.595421ms
+My memcache num conns: 12
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 292.669515ms
+My memcache num conns: 12
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 310.525211ms
+AVG ALL: 303.60532930000005
+AVG QPS: 3952499.79
+=> 23.76 Gbps
+
+
+===========================================================================
+With Allocs Reduction & Compute Key instead of fmt.Sprintf
+===========================================================================
+./memcached -m 1024 -t 12 -R 320
+WRITE LIMIT: 1600
+MAX CMD: 160
+WITH GOMEMLIMIT=512MiB
+Value Size: 257
+
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 195.925353ms
+My memcache num conns: 12
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 198.764951ms
+My memcache num conns: 12
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 198.284516ms
+AVG ALL: 205.25901353333336
+AVG QPS: 5846271.89
+=> 11.194 Gpbs
+
+
+===========================================================================
+With Allocs Reduction & Compute Key instead of fmt.Sprintf
+===========================================================================
+./memcached -m 1024 -t 12 -R 320
+WRITE LIMIT: 1600
+MAX CMD: 160
+WITH GOMEMLIMIT=512MiB
+Value Size: 307
+
+
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 204.335287ms
+My memcache num conns: 12
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 200.811036ms
+My memcache num conns: 12
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+TOTAL: 100000
+Duration for My Memcached GET 100,000, 12 threads, batch 80: 200.1402ms
+AVG ALL: 205.99842626666668
+AVG QPS: 5825287.22
+
+=> 13.324 Gpbs
